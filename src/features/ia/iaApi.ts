@@ -85,11 +85,15 @@ export async function callAI(
   });
 
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`IA no disponible (${res.status}). Si estás en dev local, usa "vercel dev" en vez de "npm run dev".`);
+    // Leer body del error para mostrar detalle (silenciado si falla)
+    const detail = await res.text().catch(() => '');
+    const suffix = detail ? ` — ${detail.slice(0, 200)}` : '';
+    throw new Error(
+      `IA no disponible (${res.status}). Si estás en dev local, usa "vercel dev" en vez de "npm run dev".${suffix}`
+    );
   }
 
-  const data = await res.json();
+  const data = (await res.json()) as { content?: string };
   return data.content ?? '';
 }
 
