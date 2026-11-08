@@ -26,6 +26,8 @@ import { AdminCargarPreguntasPage } from '@/features/admin/AdminCargarPreguntasP
 import { BlogPage } from '@/features/blog/BlogPage';
 import { PostDetailPage } from '@/features/blog/PostDetailPage';
 import { AdminPostFormPage } from '@/features/admin/AdminPostFormPage';
+import { PasswordForgotPage } from '@/features/auth/PasswordForgotPage';
+import { PasswordResetPage } from '@/features/auth/PasswordResetPage';
 
 
 
@@ -41,6 +43,8 @@ function App() {
             <Route path="/pago/exitoso" element={<PagoExitosoPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<PostDetailPage />} />
+            <Route path="/password/forgot" element={<PasswordForgotPage />} />
+            <Route path="/password/reset" element={<PasswordResetPage />} />
           </Route>
 
           <Route element={<ProtectedRoute />}>
