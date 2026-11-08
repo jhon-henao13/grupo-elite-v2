@@ -1,7 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth/AuthContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/lib/supabaseClient';
 
 export const Navbar = () => {
   const { user, signOut } = useAuth();
@@ -11,6 +12,21 @@ export const Navbar = () => {
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+
+  const AdminLink = () => {
+    const { user } = useAuth();
+    const [isAdmin, setIsAdmin] = useState(false);
+  
+    useEffect(() => {
+      if (!user?.email) return;
+      supabase.from('usuarios').select('role').eq('email', user.email).single()
+        .then(({ data }) => setIsAdmin(data?.role === 'admin'));
+    }, [user?.email]);
+  
+    if (!isAdmin) return null;
+    return <Link to="/admin" className="nav-link text-gold">👑 Admin</Link>;
   };
 
   return (
@@ -25,6 +41,7 @@ export const Navbar = () => {
           {user ? (
             <>
               <Link to="/dashboard" className="nav-link">Dashboard</Link>
+              <AdminLink />
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-400">{user.email}</span>
                 <button onClick={handleSignOut} className="btn-outline-gold text-sm py-1.5 px-4">
@@ -86,3 +103,6 @@ export const Navbar = () => {
     </header>
   );
 };
+
+
+

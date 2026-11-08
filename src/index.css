@@ -1,3 +1,5 @@
+@import url('https://db.onlinewebfonts.com/c/14936bb7a4b6575fd2eee80a3ab52cc2?family=Feather+Bold');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +11,10 @@
     letter-spacing: -0.02em;
     min-height: 100vh;
   }
-  h1, h2, h3, h4, h5, h6 { @apply font-extrabold tracking-tight; }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-extrabold tracking-tight;
+  }
 }
 
 @layer components {

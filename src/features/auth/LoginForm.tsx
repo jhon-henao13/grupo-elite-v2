@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BsEnvelope, BsLock, BsBoxArrowInRight, BsQuestionCircle } from 'react-icons/bs';
 import { toast } from 'sonner';
 import { authApi } from './authApi';
+import { supabase } from '@/lib/supabaseClient';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -15,9 +16,14 @@ export const LoginForm = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await authApi.signIn(email, password);
+      const { user } = await authApi.signIn(email, password);
+
+      // Si es admin → panel admin. Si no → dashboard
+      const { data: perfil } = await supabase
+        .from('usuarios').select('role').eq('email', user?.email).single();
+
       toast.success('¡Bienvenido de vuelta! 🎓');
-      navigate('/dashboard');
+      navigate(perfil?.role === 'admin' ? '/admin' : '/dashboard');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Credenciales incorrectas');
     } finally {
