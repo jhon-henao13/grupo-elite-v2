@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BsArrowLeft, BsPersonCircle, BsCalendarCheck, BsArrowRepeat, BsDashCircle, BsTrash } from 'react-icons/bs';
+import { BsArrowLeft, BsPersonCircle, BsArrowRepeat, BsDashCircle, BsTrash } from 'react-icons/bs';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
 import {

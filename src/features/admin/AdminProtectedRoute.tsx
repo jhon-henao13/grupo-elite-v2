@@ -13,9 +13,27 @@ export const AdminProtectedRoute = () => {
       setLoading(false);
       return;
     }
-    supabase.from('usuarios').select('role').eq('email', user.email).single()
-      .then(({ data }) => setRole(data?.role ?? null))
-      .finally(() => setLoading(false));
+  
+    let cancelled = false;
+  
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('usuarios')
+          .select('role')
+          .eq('email', user.email)
+          .single();
+        if (!cancelled) setRole(data?.role ?? null);
+      } catch {
+        if (!cancelled) setRole(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+  
+    return () => {
+      cancelled = true;
+    };
   }, [user?.email]);
 
   if (authLoading || loading) {

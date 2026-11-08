@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BsArrowLeft, BsCheckCircle, BsShieldCheck, BsKey, BsLink45Deg } from 'react-icons/bs';
 import { toast } from 'sonner';
@@ -8,7 +8,6 @@ import { supabase } from '@/lib/supabaseClient';
 import { crearSuscripcionManual } from './adminApi';
 
 export const AdminCrearSuscripcionPage = () => {
-  const navigate = useNavigate();
   const [planes, setPlanes] = useState<{ id: number; nombre: string; precio: number }[]>([]);
   const [email, setEmail] = useState('');
   const [nombre, setNombre] = useState('');
