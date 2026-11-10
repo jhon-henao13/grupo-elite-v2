@@ -13,6 +13,7 @@ import {
 import { useDashboardData } from './useDashboardData';
 import { ChartsSection } from './ChartsSection';
 import { VideoClassesSection } from './VideoClassesSection';
+import { useState } from 'react';
 
 const StatCard = ({
   icon,
@@ -39,6 +40,7 @@ const StatCard = ({
 
 export const Dashboard = () => {
   const { data, loading, error } = useDashboardData();
+  const [anioFiltro, setAnioFiltro] = useState<number | 'todos'>('todos');
 
   if (loading)
     return (
@@ -125,6 +127,7 @@ export const Dashboard = () => {
       )}
 
       {/* Materials */}
+      {/* Materials */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -137,36 +140,118 @@ export const Dashboard = () => {
         <p className="text-gray-400 mb-6">
           Contenido filtrado y seleccionado para maximizar tu puntaje
         </p>
-
+      
         {data.premium ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {data.materiales.map((m, i) => (
-              <motion.div
-                key={m.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 + i * 0.04 }}
-                className="card-glass flex flex-col"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <BsFileEarmarkPdf className="text-3xl text-gold" />
-                  <span className="text-xs bg-white/10 px-2 py-1 rounded">📅 {m.anio}</span>
-                </div>
-                <h3 className="font-bold text-white mb-2 line-clamp-2">{m.titulo}</h3>
-                <p className="text-sm text-gray-400 flex-grow mb-4 line-clamp-3">
-                  {m.descripcion || 'Material ICFES'}
+          (() => {
+            // Años únicos ordenados desc
+            const aniosDisponibles = Array.from(
+              new Set(data.materiales.map((m) => m.anio))
+            ).sort((a, b) => b - a);
+          
+            const materialesFiltrados =
+              anioFiltro === 'todos'
+                ? data.materiales
+                : data.materiales.filter((m) => m.anio === anioFiltro);
+          
+            return (
+              <>
+                {/* Filtros por año */}
+                {aniosDisponibles.length > 1 && (
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    <button
+                      onClick={() => setAnioFiltro('todos')}
+                      className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                        anioFiltro === 'todos'
+                          ? 'bg-gradient-gold text-elite-dark shadow-glow-gold'
+                          : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                      }`}
+                    >
+                      📅 Todos ({data.materiales.length})
+                    </button>
+                    {aniosDisponibles.map((anio) => {
+                      const count = data.materiales.filter((m) => m.anio === anio).length;
+                      return (
+                        <button
+                          key={anio}
+                          onClick={() => setAnioFiltro(anio)}
+                          className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                            anioFiltro === anio
+                              ? 'bg-gradient-gold text-elite-dark shadow-glow-gold'
+                              : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {anio} ({count})
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+      
+                {/* Contador y resultado */}
+                <p className="text-xs text-gray-500 mb-4">
+                  Mostrando <strong className="text-white">{materialesFiltrados.length}</strong>{' '}
+                  {materialesFiltrados.length === 1 ? 'material' : 'materiales'}
+                  {anioFiltro !== 'todos' && (
+                    <>
+                      {' '}del año <strong className="text-gold">{anioFiltro}</strong>
+                    </>
+                  )}
                 </p>
-                <a
-                  href={m.pdf_url.startsWith('https://') ? m.pdf_url : `/archivo/material/${m.pdf_url}`}
-                  target="_blank"
-                  rel="noopener"
-                  className="btn-gold text-sm text-center"
-                >
-                  {m.pdf_url.startsWith('https://') ? 'Ver en Drive' : 'Descargar'}
-                </a>
-              </motion.div>
-            ))}
-          </div>
+              
+                {/* Grid de materiales */}
+                {materialesFiltrados.length > 0 ? (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {materialesFiltrados.map((m, i) => (
+                      <motion.div
+                        key={m.id}
+                        layout
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.04 }}
+                        className="card-glass flex flex-col"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <BsFileEarmarkPdf className="text-3xl text-gold" />
+                          <span className="text-xs bg-white/10 px-2 py-1 rounded">
+                            📅 {m.anio}
+                          </span>
+                        </div>
+                        <h3 className="font-bold text-white mb-2 line-clamp-2">{m.titulo}</h3>
+                        <p className="text-sm text-gray-400 flex-grow mb-4 line-clamp-3">
+                          {m.descripcion || 'Material ICFES'}
+                        </p>
+                        <a
+                          href={
+                            m.pdf_url.startsWith('https://')
+                              ? m.pdf_url.replace('/view?usp=drivesdk', '/preview')
+                              : `/archivo/material/${m.pdf_url}`
+                          }
+                          target="_blank"
+                          rel="noopener"
+                          className="btn-gold text-sm text-center"
+                        >
+                          {m.pdf_url.startsWith('https://') ? 'Ver en Drive' : 'Descargar'}
+                        </a>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="card-glass text-center py-12">
+                    <p className="text-4xl mb-3">📭</p>
+                    <p className="text-gray-400">
+                      No hay materiales del año <strong className="text-gold">{anioFiltro}</strong>.
+                    </p>
+                    <button
+                      onClick={() => setAnioFiltro('todos')}
+                      className="mt-4 text-sm text-gold hover:underline"
+                    >
+                      Ver todos los materiales
+                    </button>
+                  </div>
+                )}
+              </>
+            );
+          })()
         ) : (
           <div className="card-glass text-center py-12">
             <p className="text-4xl mb-4">🔒</p>
