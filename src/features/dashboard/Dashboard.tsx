@@ -12,6 +12,7 @@ import {
 } from 'react-icons/bs';
 import { useDashboardData } from './useDashboardData';
 import { ChartsSection } from './ChartsSection';
+import { VideoClassesSection } from './VideoClassesSection';
 
 const StatCard = ({
   icon,
@@ -177,6 +178,9 @@ export const Dashboard = () => {
           </div>
         )}
       </motion.section>
+
+
+      <VideoClassesSection />
 
       {/* Simulacros CTA */}
       {data.premium && (
