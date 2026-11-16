@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /ia/
+Disallow: /login
+Disallow: /password/
+
+Sitemap: https://grupoelite-v2.vercel.app

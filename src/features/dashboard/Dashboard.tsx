@@ -14,6 +14,7 @@ import { useDashboardData } from './useDashboardData';
 import { ChartsSection } from './ChartsSection';
 import { VideoClassesSection } from './VideoClassesSection';
 import { useState } from 'react';
+import { SEO } from '@/shared/components/SEO';
 
 const StatCard = ({
   icon,
@@ -59,250 +60,262 @@ export const Dashboard = () => {
   const isElite = data.plan === 'Plan ELITE 500';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Welcome */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-3xl p-8 bg-gradient-to-br from-gold/10 via-transparent to-accent-blue/10 border border-gold/20 mb-8"
-      >
-        <h1 className="text-4xl md:text-5xl font-black">
-          ¡Bienvenido, <span className="text-gradient-gold">{data.nombre}</span>! 🎓
-        </h1>
-        <p className="text-lg text-gray-300 mt-3">
-          {data.premium ? (
-            <>
-              Tu acceso premium en el plan{' '}
-              <span className="bg-gold text-elite-dark px-2 py-0.5 rounded font-bold">
-                {data.plan}
-              </span>{' '}
-              vence en <strong className="text-gold">{data.diasRestantes} días</strong>.
-            </>
-          ) : (
-            'Selecciona un plan para desbloquear el material premium.'
-          )}
-        </p>
-      </motion.div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard icon={<BsBook />} value={data.materiales.length} label="Materiales Disponibles" delay={0.1} />
-        <StatCard icon={<BsGraphUp />} value={data.premium ? '100%' : '0%'} label="Acceso a Contenido" delay={0.2} />
-        <StatCard icon={<BsTrophy />} value={data.simulacrosTotal} label="Simulacros Realizados" delay={0.3} />
-        <StatCard icon={<BsCalendarCheck />} value={data.diasRestantes} label="Días Restantes" delay={0.4} />
-      </div>
+    <>
 
-      {/* Charts */}
-      {data.premium && (
-        <ChartsSection line={data.chartSimulacros} distribution={data.chartDesempeño} />
-      )}
+      <SEO
+        title="Mi Panel de Progreso"
+        description="Tu dashboard personalizado ICFES."
+        canonical="/dashboard"
+        noindex
+      />
 
-      {/* IA Mentor (solo ELITE) */}
-      {isElite && (
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Welcome */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="rounded-3xl p-8 mb-8 bg-gradient-to-r from-purple-600 to-blue-600"
+          className="rounded-3xl p-8 bg-gradient-to-br from-gold/10 via-transparent to-accent-blue/10 border border-gold/20 mb-8"
         >
-          <div className="text-center mb-6">
-            <BsRobot className="text-5xl mx-auto mb-2" />
-            <h2 className="text-3xl font-black text-white">🤖 Tu Mentor IA Personal</h2>
-            <p className="text-white/80 mt-1">
-              Análisis inteligente y estrategias personalizadas para tu éxito en el ICFES
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-3">
-            <Link to="/ia/analisis" className="bg-white/95 text-elite-dark font-bold py-3 rounded-xl text-center hover:bg-white transition-colors">
-              📊 Análisis de Progreso
-            </Link>
-            <Link to="/ia/estrategia" className="bg-white/95 text-elite-dark font-bold py-3 rounded-xl text-center hover:bg-white transition-colors">
-              📅 Estrategia de Estudio
-            </Link>
-            <Link to="/ia/chat" className="bg-white/95 text-elite-dark font-bold py-3 rounded-xl text-center hover:bg-white transition-colors">
-              💬 Chat con Mentor IA
-            </Link>
-          </div>
-        </motion.section>
-      )}
-
-      {/* Materials */}
-      {/* Materials */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-      >
-        <h2 className="text-3xl font-black mb-2 flex items-center gap-2">
-          <BsFileEarmarkPdf className="text-gold" /> Material de Estudio{' '}
-          <span className="text-gradient-gold">ICFES</span>
-        </h2>
-        <p className="text-gray-400 mb-6">
-          Contenido filtrado y seleccionado para maximizar tu puntaje
-        </p>
-      
-        {data.premium ? (
-          (() => {
-            // Años únicos ordenados desc
-            const aniosDisponibles = Array.from(
-              new Set(data.materiales.map((m) => m.anio))
-            ).sort((a, b) => b - a);
-          
-            const materialesFiltrados =
-              anioFiltro === 'todos'
-                ? data.materiales
-                : data.materiales.filter((m) => m.anio === anioFiltro);
-          
-            return (
+          <h1 className="text-4xl md:text-5xl font-black">
+            ¡Bienvenido, <span className="text-gradient-gold">{data.nombre}</span>! 🎓
+          </h1>
+          <p className="text-lg text-gray-300 mt-3">
+            {data.premium ? (
               <>
-                {/* Filtros por año */}
-                {aniosDisponibles.length > 1 && (
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    <button
-                      onClick={() => setAnioFiltro('todos')}
-                      className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                        anioFiltro === 'todos'
-                          ? 'bg-gradient-gold text-elite-dark shadow-glow-gold'
-                          : 'bg-white/5 text-gray-300 hover:bg-white/10'
-                      }`}
-                    >
-                      📅 Todos ({data.materiales.length})
-                    </button>
-                    {aniosDisponibles.map((anio) => {
-                      const count = data.materiales.filter((m) => m.anio === anio).length;
-                      return (
-                        <button
-                          key={anio}
-                          onClick={() => setAnioFiltro(anio)}
-                          className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                            anioFiltro === anio
-                              ? 'bg-gradient-gold text-elite-dark shadow-glow-gold'
-                              : 'bg-white/5 text-gray-300 hover:bg-white/10'
-                          }`}
-                        >
-                          {anio} ({count})
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-      
-                {/* Contador y resultado */}
-                <p className="text-xs text-gray-500 mb-4">
-                  Mostrando <strong className="text-white">{materialesFiltrados.length}</strong>{' '}
-                  {materialesFiltrados.length === 1 ? 'material' : 'materiales'}
-                  {anioFiltro !== 'todos' && (
-                    <>
-                      {' '}del año <strong className="text-gold">{anioFiltro}</strong>
-                    </>
-                  )}
-                </p>
-              
-                {/* Grid de materiales */}
-                {materialesFiltrados.length > 0 ? (
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {materialesFiltrados.map((m, i) => (
-                      <motion.div
-                        key={m.id}
-                        layout
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.04 }}
-                        className="card-glass flex flex-col"
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <BsFileEarmarkPdf className="text-3xl text-gold" />
-                          <span className="text-xs bg-white/10 px-2 py-1 rounded">
-                            📅 {m.anio}
-                          </span>
-                        </div>
-                        <h3 className="font-bold text-white mb-2 line-clamp-2">{m.titulo}</h3>
-                        <p className="text-sm text-gray-400 flex-grow mb-4 line-clamp-3">
-                          {m.descripcion || 'Material ICFES'}
-                        </p>
-                        <a
-                          href={
-                            m.pdf_url.startsWith('https://')
-                              ? m.pdf_url.replace('/view?usp=drivesdk', '/preview')
-                              : `/archivo/material/${m.pdf_url}`
-                          }
-                          target="_blank"
-                          rel="noopener"
-                          className="btn-gold text-sm text-center"
-                        >
-                          {m.pdf_url.startsWith('https://') ? 'Ver en Drive' : 'Descargar'}
-                        </a>
-                      </motion.div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="card-glass text-center py-12">
-                    <p className="text-4xl mb-3">📭</p>
-                    <p className="text-gray-400">
-                      No hay materiales del año <strong className="text-gold">{anioFiltro}</strong>.
-                    </p>
-                    <button
-                      onClick={() => setAnioFiltro('todos')}
-                      className="mt-4 text-sm text-gold hover:underline"
-                    >
-                      Ver todos los materiales
-                    </button>
-                  </div>
-                )}
+                Tu acceso premium en el plan{' '}
+                <span className="bg-gold text-elite-dark px-2 py-0.5 rounded font-bold">
+                  {data.plan}
+                </span>{' '}
+                vence en <strong className="text-gold">{data.diasRestantes} días</strong>.
               </>
-            );
-          })()
-        ) : (
-          <div className="card-glass text-center py-12">
-            <p className="text-4xl mb-4">🔒</p>
-            <p className="text-lg font-bold mb-2">Material bloqueado</p>
-            <p className="text-gray-400 mb-6">Necesitas una suscripción activa</p>
-            <Link to="/suscripcion" className="btn-gold inline-block">
-              👑 Seleccionar Plan
-            </Link>
-          </div>
+            ) : (
+              'Selecciona un plan para desbloquear el material premium.'
+            )}
+          </p>
+        </motion.div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <StatCard icon={<BsBook />} value={data.materiales.length} label="Materiales Disponibles" delay={0.1} />
+          <StatCard icon={<BsGraphUp />} value={data.premium ? '100%' : '0%'} label="Acceso a Contenido" delay={0.2} />
+          <StatCard icon={<BsTrophy />} value={data.simulacrosTotal} label="Simulacros Realizados" delay={0.3} />
+          <StatCard icon={<BsCalendarCheck />} value={data.diasRestantes} label="Días Restantes" delay={0.4} />
+        </div>
+
+        {/* Charts */}
+        {data.premium && (
+          <ChartsSection line={data.chartSimulacros} distribution={data.chartDesempeño} />
         )}
-      </motion.section>
 
+        {/* IA Mentor (solo ELITE) */}
+        {isElite && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="rounded-3xl p-8 mb-8 bg-gradient-to-r from-purple-600 to-blue-600"
+          >
+            <div className="text-center mb-6">
+              <BsRobot className="text-5xl mx-auto mb-2" />
+              <h2 className="text-3xl font-black text-white">🤖 Tu Mentor IA Personal</h2>
+              <p className="text-white/80 mt-1">
+                Análisis inteligente y estrategias personalizadas para tu éxito en el ICFES
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-3">
+              <Link to="/ia/analisis" className="bg-white/95 text-elite-dark font-bold py-3 rounded-xl text-center hover:bg-white transition-colors">
+                📊 Análisis de Progreso
+              </Link>
+              <Link to="/ia/estrategia" className="bg-white/95 text-elite-dark font-bold py-3 rounded-xl text-center hover:bg-white transition-colors">
+                📅 Estrategia de Estudio
+              </Link>
+              <Link to="/ia/chat" className="bg-white/95 text-elite-dark font-bold py-3 rounded-xl text-center hover:bg-white transition-colors">
+                💬 Chat con Mentor IA
+              </Link>
+            </div>
+          </motion.section>
+        )}
 
-      <VideoClassesSection />
-
-      {/* Simulacros CTA */}
-      {data.premium && (
+        {/* Materials */}
+        {/* Materials */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="mt-12"
+          transition={{ delay: 0.6 }}
         >
           <h2 className="text-3xl font-black mb-2 flex items-center gap-2">
-            <BsClipboardCheck className="text-gold" /> Simulacros Disponibles
+            <BsFileEarmarkPdf className="text-gold" /> Material de Estudio{' '}
+            <span className="text-gradient-gold">ICFES</span>
           </h2>
-          <p className="text-gray-400 mb-6">Practica con exámenes basados en el ICFES real</p>
-          <Link to="/simulacros" className="btn-gold inline-flex items-center gap-2">
-            Ver Todos los Simulacros <BsArrowRight />
-          </Link>
-        </motion.section>
-      )}
-
-      {/* CTA Suscripción */}
-      {!data.premium && (
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-12 card-glass text-center"
-        >
-          <h3 className="text-2xl font-black mb-3">
-            ⚡ ¿Listo para el <span className="text-gradient-gold">Top 1%</span>?
-          </h3>
           <p className="text-gray-400 mb-6">
-            Acceso a todo el material ICFES, simulacros ilimitados y soporte 24/7
+            Contenido filtrado y seleccionado para maximizar tu puntaje
           </p>
-          <Link to="/suscripcion" className="btn-gold inline-flex items-center gap-2">
-            👑 Ver Planes
-          </Link>
+
+          {data.premium ? (
+            (() => {
+              // Años únicos ordenados desc
+              const aniosDisponibles = Array.from(
+                new Set(data.materiales.map((m) => m.anio))
+              ).sort((a, b) => b - a);
+            
+              const materialesFiltrados =
+                anioFiltro === 'todos'
+                  ? data.materiales
+                  : data.materiales.filter((m) => m.anio === anioFiltro);
+            
+              return (
+                <>
+                  {/* Filtros por año */}
+                  {aniosDisponibles.length > 1 && (
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      <button
+                        onClick={() => setAnioFiltro('todos')}
+                        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                          anioFiltro === 'todos'
+                            ? 'bg-gradient-gold text-elite-dark shadow-glow-gold'
+                            : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                        }`}
+                      >
+                        📅 Todos ({data.materiales.length})
+                      </button>
+                      {aniosDisponibles.map((anio) => {
+                        const count = data.materiales.filter((m) => m.anio === anio).length;
+                        return (
+                          <button
+                            key={anio}
+                            onClick={() => setAnioFiltro(anio)}
+                            className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                              anioFiltro === anio
+                                ? 'bg-gradient-gold text-elite-dark shadow-glow-gold'
+                                : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                            }`}
+                          >
+                            {anio} ({count})
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Contador y resultado */}
+                  <p className="text-xs text-gray-500 mb-4">
+                    Mostrando <strong className="text-white">{materialesFiltrados.length}</strong>{' '}
+                    {materialesFiltrados.length === 1 ? 'material' : 'materiales'}
+                    {anioFiltro !== 'todos' && (
+                      <>
+                        {' '}del año <strong className="text-gold">{anioFiltro}</strong>
+                      </>
+                    )}
+                  </p>
+                  
+                  {/* Grid de materiales */}
+                  {materialesFiltrados.length > 0 ? (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {materialesFiltrados.map((m, i) => (
+                        <motion.div
+                          key={m.id}
+                          layout
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.04 }}
+                          className="card-glass flex flex-col"
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <BsFileEarmarkPdf className="text-3xl text-gold" />
+                            <span className="text-xs bg-white/10 px-2 py-1 rounded">
+                              📅 {m.anio}
+                            </span>
+                          </div>
+                          <h3 className="font-bold text-white mb-2 line-clamp-2">{m.titulo}</h3>
+                          <p className="text-sm text-gray-400 flex-grow mb-4 line-clamp-3">
+                            {m.descripcion || 'Material ICFES'}
+                          </p>
+                          <a
+                            href={
+                              m.pdf_url.startsWith('https://')
+                                ? m.pdf_url.replace('/view?usp=drivesdk', '/preview')
+                                : `/archivo/material/${m.pdf_url}`
+                            }
+                            target="_blank"
+                            rel="noopener"
+                            className="btn-gold text-sm text-center"
+                          >
+                            {m.pdf_url.startsWith('https://') ? 'Ver en Drive' : 'Descargar'}
+                          </a>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="card-glass text-center py-12">
+                      <p className="text-4xl mb-3">📭</p>
+                      <p className="text-gray-400">
+                        No hay materiales del año <strong className="text-gold">{anioFiltro}</strong>.
+                      </p>
+                      <button
+                        onClick={() => setAnioFiltro('todos')}
+                        className="mt-4 text-sm text-gold hover:underline"
+                      >
+                        Ver todos los materiales
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()
+          ) : (
+            <div className="card-glass text-center py-12">
+              <p className="text-4xl mb-4">🔒</p>
+              <p className="text-lg font-bold mb-2">Material bloqueado</p>
+              <p className="text-gray-400 mb-6">Necesitas una suscripción activa</p>
+              <Link to="/suscripcion" className="btn-gold inline-block">
+                👑 Seleccionar Plan
+              </Link>
+            </div>
+          )}
         </motion.section>
-      )}
-    </div>
+
+
+        <VideoClassesSection />
+
+        {/* Simulacros CTA */}
+        {data.premium && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="mt-12"
+          >
+            <h2 className="text-3xl font-black mb-2 flex items-center gap-2">
+              <BsClipboardCheck className="text-gold" /> Simulacros Disponibles
+            </h2>
+            <p className="text-gray-400 mb-6">Practica con exámenes basados en el ICFES real</p>
+            <Link to="/simulacros" className="btn-gold inline-flex items-center gap-2">
+              Ver Todos los Simulacros <BsArrowRight />
+            </Link>
+          </motion.section>
+        )}
+
+        {/* CTA Suscripción */}
+        {!data.premium && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-12 card-glass text-center"
+          >
+            <h3 className="text-2xl font-black mb-3">
+              ⚡ ¿Listo para el <span className="text-gradient-gold">Top 1%</span>?
+            </h3>
+            <p className="text-gray-400 mb-6">
+              Acceso a todo el material ICFES, simulacros ilimitados y soporte 24/7
+            </p>
+            <Link to="/suscripcion" className="btn-gold inline-flex items-center gap-2">
+              👑 Ver Planes
+            </Link>
+          </motion.section>
+        )}
+      </div>
+
+    </>
   );
 };
