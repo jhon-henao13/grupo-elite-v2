@@ -6,6 +6,7 @@ interface SEOProps {
   type?: 'website' | 'article';
   publishedTime?: string;
   keywords?: string;
+  author?: string;
   noindex?: boolean;
 }
 
@@ -20,6 +21,7 @@ export const SEO = ({
   type = 'website',
   publishedTime,
   keywords,
+  author = 'Grupo Elite',
   noindex = false,
 }: SEOProps) => {
   const fullUrl = canonical ? `${SITE_URL}${canonical}` : SITE_URL;
@@ -45,7 +47,7 @@ export const SEO = ({
       {publishedTime && (
         <meta property="article:published_time" content={publishedTime} />
       )}
-      {publishedTime && <meta property="article:author" content="Grupo Elite" />}
+      {publishedTime && <meta property="article:author" content={author} />}
 
       {/* Twitter / X */}
       <meta name="twitter:card" content="summary_large_image" />
